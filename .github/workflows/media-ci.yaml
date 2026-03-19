@@ -44,6 +44,7 @@ jobs:
           push: true
           tags: ghcr.io/nashtech-garage/yas-media:latest
       - name: Add coverage report to PR
+        id: jacoco_reporter
         uses: madrapps/jacoco-report@v1.6.1
         if: ${{ env.FROM_ORIGINAL_REPOSITORY == 'true' }}
         with:
