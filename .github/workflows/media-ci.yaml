@@ -51,9 +51,22 @@ jobs:
           token: ${{secrets.GITHUB_TOKEN}}
           min-coverage-overall: 70
           min-coverage-changed-files: 70
-          continue-on-error: false
           title: 'media Coverage Report'
           update-comment: true
+
+      - name: Fail workflow if Coverage is low
+        # Bước 2: Bắt kết quả của bước trên và đánh rớt pipeline nếu dưới 70
+        run: |
+          OVERALL=${{ steps.jacoco_reporter.outputs['coverage-overall'] }}
+          echo "Current Overall Coverage is: $OVERALL%"
+          
+          # Dùng lệnh bc (máy tính) của Linux để so sánh số thập phân
+          if (( $(echo "$OVERALL < 70.0" | bc -l) )); then
+            echo "❌ LỖI: Độ phủ code ($OVERALL%) thấp hơn mức tối thiểu (70%)!"
+            exit 1 # Lệnh này sẽ chính thức ĐÁNH ĐỎ pipeline của bạn
+          else
+            echo "✅ Độ phủ code đạt chuẩn!"
+          fi
           
   Snyk:
     runs-on: ubuntu-latest
